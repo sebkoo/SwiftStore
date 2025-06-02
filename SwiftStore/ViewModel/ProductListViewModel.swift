@@ -13,7 +13,11 @@ final class ProductListViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
 
-    private let service = ProductService()
+    private let service: ProductService
+
+    init(service: ProductService = SwiftProductService()) {
+        self.service = service
+    }
 
     func loadProducts() async {
         isLoading = true

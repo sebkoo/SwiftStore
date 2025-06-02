@@ -7,7 +7,11 @@
 
 import Foundation
 
-final class ProductService {
+protocol ProductService {
+    func fetchProducts() async throws -> [Product]
+}
+
+final class SwiftProductService: ProductService {
     func fetchProducts() async throws -> [Product] {
         guard let url = URL(string: "https://api.escuelajs.co/api/v1/products") else {
             throw URLError(.badURL)
