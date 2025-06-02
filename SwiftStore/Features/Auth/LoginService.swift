@@ -9,6 +9,8 @@ import Foundation
 
 protocol LoginService {
     func login(email: String, password: String) async throws -> String
+    func logout()
+    func currentToken() -> String?
 }
 
 struct SwiftLoginService: LoginService {
@@ -36,6 +38,7 @@ struct SwiftLoginService: LoginService {
 
 final class MockLoginService: LoginService {
     var shouldSucceed: Bool = true
+    var mockToken: String? = nil
 
     func login(email: String, password: String) async throws -> String {
         if shouldSucceed {
@@ -43,5 +46,11 @@ final class MockLoginService: LoginService {
         } else {
             throw URLError(.userAuthenticationRequired)
         }
+    }
+
+    func logout() { }
+
+    func currentToken() -> String? {
+        return mockToken
     }
 }

@@ -9,38 +9,36 @@ import SwiftUI
 
 struct LoginView: View {
     @StateObject private var viewModel = LoginViewModel()
-    @State private var loggedIn = false
+    @ObservedObject var session = SessionManager.shared
 
     var body: some View {
-        if loggedIn {
-            MainView()
-        } else {
-            VStack(spacing: 20) {
-                Text("Login")
-                    .font(.largeTitle)
-                    .bold()
+        VStack(spacing: 20) {
+            Text("Login")
+                .font(.largeTitle)
+                .bold()
 
-                TextField("Email", text: $viewModel.email)
-                    .textFieldStyle(.roundedBorder)
-                    .keyboardType(.emailAddress)
+            TextField("Email", text: $viewModel.email)
+                .textFieldStyle(.roundedBorder)
+                .keyboardType(.emailAddress)
 
-                SecureField("Password", text: $viewModel.password)
-                    .textFieldStyle(.roundedBorder)
+            SecureField("Password", text: $viewModel.password)
+                .textFieldStyle(.roundedBorder)
 
-                if let error = viewModel.errorMessage {
-                    Text(error)
-                        .foregroundColor(.red)
-                }
+            if let error = viewModel.errorMessage {
+                Text(error)
+                    .foregroundColor(.red)
+            }
 
-                Button("Log In") {
-                    viewModel.login { success in
-                        loggedIn = success
+            Button("Log In") {
+                viewModel.login { success in
+                    if success {
+                        session.loginSucceeded()
                     }
                 }
-                .buttonStyle(.borderedProminent)
             }
-            .padding()
+            .buttonStyle(.borderedProminent)
         }
+        .padding()
     }
 }
 

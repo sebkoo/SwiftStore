@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct MainView: View {
+    @ObservedObject var session = SessionManager.shared
+
     var body: some View {
         TabView {
             ProductListView()
@@ -19,6 +21,13 @@ struct MainView: View {
                 .tabItem {
                     Label("Cart", systemImage: "cart")
                 }
+
+            Button("Logout") {
+                session.logout()
+            }
+            .tabItem {
+                Label("Logout", systemImage: "rectangle.portrait.and.arrow.forward")
+            }
         }
     }
 }

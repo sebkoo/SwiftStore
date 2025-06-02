@@ -9,11 +9,11 @@ import SwiftUI
 
 @main
 struct SwiftStoreApp: App {
-    let loginService = SwiftLoginService()
+    @StateObject private var session = SessionManager.shared
 
     var body: some Scene {
         WindowGroup {
-            if loginService.currentToken() != nil {
+            if session.isLoggedIn {
                 MainView()
             } else {
                 LoginView()
