@@ -11,7 +11,7 @@ import XCTest
 final class ProductDetailViewModelTests: XCTestCase {
     func test_productDetail_hasCorrectTitle() {
         let product = Product(id: 1, title: "Test Product", price: 99.99, images: ["https://via.placeholder.com/150"])
-        let viewModel = ProductDetaliViewModel(product: product)
+        let viewModel = ProductDetailViewModel(product: product)
         XCTAssertEqual(viewModel.title, "Test Product")
     }
 }

@@ -33,6 +33,19 @@ struct ProductDetailView: View {
                     .font(.title2)
                     .foregroundColor(.secondary)
 
+                Button {
+                    CartManager.shared.add(viewModel.product)
+                } label: {
+                    Text("Add to Cart")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+                .padding(.top, 20)
+
                 Spacer()
             }
             .padding()
