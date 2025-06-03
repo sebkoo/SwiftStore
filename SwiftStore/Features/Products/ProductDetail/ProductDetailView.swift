@@ -34,6 +34,17 @@ struct ProductDetailView: View {
                     .foregroundColor(.secondary)
 
                 Button {
+                    FavoritesManager.shared.toggle(viewModel.product)
+                } label: {
+                    Image(systemName: FavoritesManager.shared.contains(viewModel.product)
+                          ? "heart.fill"
+                          : "heart"
+                    )
+                    .foregroundColor(.red)
+                    .font(.title2)
+                }
+
+                Button {
                     CartManager.shared.add(viewModel.product)
                 } label: {
                     Text("Add to Cart")
@@ -45,6 +56,8 @@ struct ProductDetailView: View {
                         .cornerRadius(10)
                 }
                 .padding(.top, 20)
+
+
 
                 Spacer()
             }

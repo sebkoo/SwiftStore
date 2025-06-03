@@ -11,6 +11,15 @@ import XCTest
 @MainActor
 final class ProductListViewModelTests: XCTestCase {
 
+    private var viewModel: ProductListViewModel!
+    private var mockService: MockProductService!
+
+    override func setUp() {
+        super.setUp()
+        mockService = MockProductService()
+        viewModel = ProductListViewModel(service: mockService)
+    }
+
     // MARK: - Mock Service
     class MockServiceSuccess: ProductService {
         func fetchProductList() async throws -> [Product] {
@@ -43,5 +52,21 @@ final class ProductListViewModelTests: XCTestCase {
         XCTAssertFalse(viewModel.isLoading)
         XCTAssertNotNil(viewModel.errorMessage)
         XCTAssertEqual(viewModel.products.count, 0)
+    }
+
+    func test_loadingStateChanges() async {
+        let loading = XCTestExpectation(description: "ViewModel started loading")
+        let loaded = XCTestExpectation(description: "ViewModel finished loading")
+
+        // Observe changes to `isLoading`
+        let cancellable = viewModel.$isLoading.sink { isLoading in
+            isLoading ? loading.fulfill() : loaded.fulfill()
+        }
+
+        await viewModel.loadProducts()
+
+        await fulfillment(of: [loading, loaded], timeout: 2)
+
+        cancellable.cancel()
     }
 }

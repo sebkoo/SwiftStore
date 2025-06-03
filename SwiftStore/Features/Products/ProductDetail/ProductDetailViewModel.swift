@@ -14,14 +14,8 @@ final class ProductDetailViewModel: ObservableObject {
         self.product = product
     }
 
-    var title: String {
-        product.title
-    }
-
-    var price: String {
-        String(format: "$%.2f", product.price)
-    }
-
+    var title: String { product.title }
+    var price: String { String(format: "$%.2f", product.price) }
     var imageURL: URL? {
         URL(string: product.images.first ?? "")
     }
