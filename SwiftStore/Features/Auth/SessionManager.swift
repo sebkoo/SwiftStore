@@ -17,7 +17,7 @@ final class SessionManager: ObservableObject {
 
     init(loginService: LoginService = SwiftLoginService()) {
         self.loginService = loginService
-        self.isLoggedIn = loginService.currentToken() != nil
+        Task { await refreshSessionIfNeeded() }
     }
 
     func logout() {
@@ -27,5 +27,19 @@ final class SessionManager: ObservableObject {
 
     func loginSucceeded() {
         isLoggedIn = true
+    }
+
+    func refreshSessionIfNeeded() async {
+        if loginService.currentToken() != nil {
+            self.isLoggedIn = true
+            return
+        }
+
+        do {
+            _ = try await loginService.refreshToken()
+            self.isLoggedIn = true
+        } catch {
+            self.isLoggedIn = false
+        }
     }
 }

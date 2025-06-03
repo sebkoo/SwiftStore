@@ -14,4 +14,13 @@ final class LoginServiceTests: XCTestCase {
         let token = try await mockService.login(email: "john@mail.com", password: "changeme")
         XCTAssertEqual(token, "mock_token_123")
     }
+
+    func test_refreshToken_savesNewAccessToken() async throws {
+        let client = MockHTTPClient()
+        let service = SwiftLoginService(client: client)
+
+        KeychainHelper.standard.save("mock_refresh_456", service: "refresh", account: "platzi")
+        let token = try await service.refreshToken()
+        XCTAssertEqual(token, "mock_token_123")
+    }
 }

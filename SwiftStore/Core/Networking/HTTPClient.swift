@@ -28,6 +28,12 @@ class HTTPClient {
     }
 
     private func send<T: Decodable>(_ request: URLRequest) async throws -> T {
+        var request = request
+
+        if let token = KeychainHelper.standard.read(service: "token", account: "platzi") {
+            request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+
         let (data, response) = try await URLSession.shared.data(for: request)
 
         guard

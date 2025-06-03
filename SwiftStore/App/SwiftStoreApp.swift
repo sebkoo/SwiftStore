@@ -13,10 +13,12 @@ struct SwiftStoreApp: App {
 
     var body: some Scene {
         WindowGroup {
-            if session.isLoggedIn {
-                MainView()
-            } else {
-                LoginView()
+            Group {
+                if session.isLoggedIn {
+                    MainView()
+                } else {
+                    LoginView()
+                }
             }
         }
     }
