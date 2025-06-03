@@ -48,8 +48,21 @@ class HTTPClient {
 }
 
 final class MockHTTPClient: HTTPClient {
+    var mockData: Data?
+    var shouldFail: Bool = false
+
     override func post<T: Decodable>(_ endpoint: String, body: [String: Any]) async throws -> T {
         let mockResponse = LoginResponse(access_token: "mock_token_123", refresh_token: "mock_refresh_456")
         return mockResponse as! T
+    }
+
+    override func get<T: Decodable>(_ endpoint: String) async throws -> T {
+        if shouldFail {
+            throw URLError(.badServerResponse)
+        }
+        guard let data = mockData else {
+            throw URLError(.cannotParseResponse)
+        }
+        return try JSONDecoder().decode(T.self, from: data)
     }
 }
