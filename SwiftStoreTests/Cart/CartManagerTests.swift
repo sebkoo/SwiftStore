@@ -10,26 +10,91 @@ import XCTest
 
 @MainActor
 final class CartManagerTests: XCTestCase {
-    func test_addProduct_addsToCart() {
-        let manager = CartManager.shared
-        manager.clear() // reset cart
 
-        let product = Product(id: 1, title: "Test", price: 10, images: [])
-        manager.add(product)
+    var cart: CartManager!
+    var product: Product!
 
-        XCTAssertEqual(manager.items.count, 1)
-        XCTAssertEqual(manager.items.first?.quantity, 1)
+    override func setUpWithError() throws {
+        super.setUp()
+        cart = CartManager.shared
+        cart.clear()    // reset
+        product = Product(id: 1, title: "Test Product", price: 9.99, images: [])
+    }
+
+    override func tearDown() {
+        cart.clear()
+        cart = nil
+        product = nil
+        super.tearDown()
+    }
+
+    func test_addProduct_increasesCart() {
+        cart.add(product)
+
+        XCTAssertEqual(cart.items.count, 1)
+        XCTAssertEqual(cart.items.first?.quantity, 1)
     }
 
     func test_addSameProduct_increasesQuantity() {
-        let manager = CartManager.shared
-        manager.clear()
+        cart.add(product)
+        cart.add(product)
 
-        let product = Product(id: 1, title: "Test", price: 10, images: [])
-        manager.add(product)
-        manager.add(product)
+        XCTAssertEqual(cart.items.count, 1)
+        XCTAssertEqual(cart.items.first?.quantity, 2)
+    }
 
-        XCTAssertEqual(manager.items.count, 1)
-        XCTAssertEqual(manager.items.first?.quantity, 2)
+    func test_increasesProduct() {
+        cart.add(product)
+        let item = cart.items.first!
+        cart.increaseQuantity(item)
+
+        XCTAssertEqual(cart.items.first?.quantity, 2)
+    }
+
+    func test_decreasesProduct_reducesQuantity() {
+        cart.add(product)
+        cart.add(product)
+        let item = cart.items.first!
+        cart.decreaseQuantity(item)
+
+        XCTAssertEqual(cart.items.first?.quantity, 1)
+    }
+
+    func test_decreasesProduct_atZero() {
+        cart.add(product)
+        let item = cart.items.first!
+        cart.decreaseQuantity(item)
+
+        XCTAssertTrue(cart.items.isEmpty)
+    }
+
+    func test_removeProduct() {
+        cart.add(product)
+        cart.remove(product)
+
+        XCTAssertTrue(cart.items.isEmpty)
+    }
+
+    func test_clearCart_emptiesAllItems() {
+        cart.add(product)
+        cart.clear()
+
+        XCTAssertTrue(cart.items.isEmpty)
+    }
+
+    func test_persistence() {
+        let product = Product(id: 4, title: "Persist", price: 3.0, images: [])
+        cart.add(product)
+
+        let newCart = CartManager.shared
+        XCTAssertFalse(newCart.items.isEmpty)
+    }
+
+    func test_calculateTotalPrice() {
+        cart.add(product)
+        cart.add(product)
+        let total = cart.items.map { $0.totalPrice }.reduce(0, +)
+
+        XCTAssertEqual(total, 19.98, accuracy: 0.01)
     }
 }

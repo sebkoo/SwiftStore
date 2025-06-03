@@ -21,14 +21,35 @@ struct CartView: View {
                 } else {
                     List {
                         ForEach(viewModel.items) { item in
-                            VStack(alignment: .leading) {
+                            VStack(alignment: .leading, spacing: 6) {
                                 Text(item.title)
                                     .font(.headline)
-                                Text("Quantity: \(item.quantity)")
-                                Text("Total: $\(item.totalPrice, specifier: "%.2f")")
+
+                                HStack {
+                                    Button {
+                                        viewModel.decrease(item)
+                                    } label: {
+                                        Image(systemName: "minus.circle.fill")
+                                            .foregroundColor(.blue)
+                                    }
+
+                                    Text("Qty: \(item.quantity)")
+                                        .frame(width: 60)
+
+                                    Button {
+                                        viewModel.increase(item)
+                                    } label: {
+                                        Image(systemName: "plus.circle.fill")
+                                            .foregroundColor(.blue)
+                                    }
+
+                                    Spacer()
+                                    Text("$\(item.totalPrice, specifier: "%.2f")")
+                                }
                             }
                             .padding(.vertical, 4)
                         }
+                        .onDelete(perform: viewModel.remove)
                     }
 
                     HStack {

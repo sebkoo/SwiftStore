@@ -6,30 +6,47 @@
 //
 
 import Foundation
+import Combine
 
 @MainActor
 final class CartViewModel: ObservableObject {
     @Published var items: [CartItem] = []
-    @Published var totalPrice: Double = 0
+    @Published var totalPrice: Double = 0.0
 
     private var cart = CartManager.shared
+    private var cancellables: Set<AnyCancellable> = []
 
-    init() {
-        self.items = cart.items
-        self.totalPrice = cart.items.reduce(0) { $0 + $1.totalPrice }
+    init() { observe() }
 
-        Task {
-            for await _ in cart.$items.values {
-                self.items = cart.items
-                self.totalPrice = cart.items.reduce(0) { $0 + $1.totalPrice }
+    func observe() {
+        cart = CartManager.shared
+        items = cart.items
+        totalPrice = cart.items.map { $0.totalPrice }.reduce(0, +)
+
+        cart.$items
+            .sink { [weak self] updated in
+                self?.items = updated
+                self?.totalPrice = updated.map { $0.totalPrice }.reduce(0, +)
             }
-        }
+            .store(in: &cancellables)
     }
 
+    func increase(_ item: CartItem) {
+        cart.increaseQuantity(item)
+    }
+
+    func decrease(_ item: CartItem) {
+        cart.decreaseQuantity(item)
+    }
 
     func clearCart() {
         cart.clear()
-        items = cart.items
-        totalPrice = items.reduce(0) { $0 + $1.totalPrice }
+    }
+
+    func remove(at offsets: IndexSet) {
+        for index in offsets {
+            let item = items[index]
+            cart.remove(Product(id: item.id, title: item.title, price: item.price, images: []))
+        }
     }
 }

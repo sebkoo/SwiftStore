@@ -21,7 +21,7 @@ final class CartManager: ObservableObject {
 
     func add(_ product: Product) {
         if let index = items.firstIndex(where: { $0.id == product.id }) {
-            var currentItem = items[index]
+            let currentItem = items[index]
             items[index] = CartItem(product: product, quantity: currentItem.quantity + 1)
         } else {
             items.append(CartItem(product: product))
@@ -30,6 +30,30 @@ final class CartManager: ObservableObject {
 
     func remove(_ product: Product) {
         items.removeAll() { $0.id == product.id }
+    }
+
+    func increaseQuantity(_ item: CartItem) {
+        guard let index = items.firstIndex(of: item) else { return }
+        let updated = CartItem(product: Product(id: item.id,
+                                                title: item.title,
+                                                price: item.price,
+                                                images: []),
+                               quantity: item.quantity + 1)
+        items[index] = updated
+    }
+
+    func decreaseQuantity(_ item: CartItem) {
+        guard let index = items.firstIndex(of: item) else { return }
+        let current = items[index]
+        if current.quantity > 1 {
+            items[index] = CartItem(product: Product(id: item.id,
+                                                    title: item.title,
+                                                    price: item.price,
+                                                    images: []),
+                                   quantity: item.quantity - 1)
+        } else {
+            items.remove(at: index)
+        }
     }
 
     func clear() {
