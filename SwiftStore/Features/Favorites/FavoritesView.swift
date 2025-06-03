@@ -35,9 +35,11 @@ struct FavoritesView: View {
                     ) {
                         HStack(spacing: 16) {
                             AsyncImage(url: URL(string: item.image)) { image in
-                                image.resizable()
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
                             } placeholder: {
-                                Color.gray.opacity(0.2)
+                                ProgressView()
                             }
                             .frame(width: 60, height: 60)
                             .cornerRadius(8)
@@ -47,10 +49,22 @@ struct FavoritesView: View {
                                     .font(.headline)
                                     .lineLimit(1)
                                 Text("$\(item.price, specifier: "%.2f")")
+                                    .font(.subheadline)
                                     .foregroundColor(.secondary)
                             }
+
+                            Spacer()
+
+                            Button {
+                                if let product = Product.fromFavorite(item) {
+                                    manager.toggle(product)
+                                }
+                            } label: {
+                                Image(systemName: "heart.fill")
+                                    .foregroundColor(.red)
+                            }
                         }
-                        .padding(.vertical, 8)
+                        .padding(.vertical, 4)
                     }
                 }
                 .navigationTitle("Favorites")
@@ -60,5 +74,16 @@ struct FavoritesView: View {
 }
 
 #Preview {
-    FavoritesView()
+    // Setup mock favorites for preview
+    let favorites = FavoritesManager.shared
+    favorites.clear()
+    favorites.add(
+        Product(id: 1,
+                title: "Mock Shoes",
+                price: 89.99,
+                images: ["https://placehold.co/100x100"]
+               )
+    )
+
+    return FavoritesView()
 }
