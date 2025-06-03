@@ -11,13 +11,14 @@ import Foundation
 final class SessionManager: ObservableObject {
     static let shared = SessionManager()    // for app use
 
-    @Published var isLoggedIn: Bool = false
+    @Published private(set) var isLoggedIn: Bool = false
 
     private let loginService: LoginService
 
     init(loginService: LoginService = SwiftLoginService()) {
         self.loginService = loginService
-        Task { await refreshSessionIfNeeded() }
+        let tokenExists = loginService.currentToken() != nil
+        self.isLoggedIn = tokenExists
     }
 
     func logout() {

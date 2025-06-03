@@ -11,7 +11,9 @@ import Foundation
 final class CartManager: ObservableObject {
     static let shared = CartManager()
 
-    @Published private(set) var items: [CartItem] = []
+    @Published private(set) var items: [CartItem] = [] {
+        didSet { saveCart() }
+    }
 
     private let cartKey = "cart_items"
 
@@ -19,13 +21,15 @@ final class CartManager: ObservableObject {
 
     func add(_ product: Product) {
         if let index = items.firstIndex(where: { $0.id == product.id }) {
-            var updated = items[index]
-            updated = CartItem(product: product, quantity: updated.quantity + 1)
-            items[index] = updated
+            var currentItem = items[index]
+            items[index] = CartItem(product: product, quantity: currentItem.quantity + 1)
         } else {
             items.append(CartItem(product: product))
         }
-        saveCart()
+    }
+
+    func remove(_ product: Product) {
+        items.removeAll() { $0.id == product.id }
     }
 
     func clear() {
@@ -34,9 +38,8 @@ final class CartManager: ObservableObject {
     }
 
     private func saveCart() {
-        if let data = try? JSONEncoder().encode(items) {
-            UserDefaults.standard.set(data, forKey: cartKey)
-        }
+        guard let data = try? JSONEncoder().encode(items) else { return }
+        UserDefaults.standard.set(data, forKey: cartKey)
     }
 
     private func loadCart() {

@@ -9,7 +9,6 @@ import Foundation
 
 protocol ProductService {
     func fetchProductList() async throws -> [Product]
-    func fetchProduct(id: Int) async throws -> Product
 }
 
 final class SwiftProductService: ProductService {
@@ -21,10 +20,6 @@ final class SwiftProductService: ProductService {
 
     func fetchProductList() async throws -> [Product] {
         try await client.get("/products")
-    }
-
-    func fetchProduct(id: Int) async throws -> Product {
-        try await client.get("/products/\(id)")
     }
 }
 
@@ -38,9 +33,5 @@ final class MockProductService: ProductService {
 
     func fetchProductList() async throws -> [Product] {
         return [sampleProduct]
-    }
-
-    func fetchProduct(id: Int) async throws -> Product {
-        return sampleProduct
     }
 }

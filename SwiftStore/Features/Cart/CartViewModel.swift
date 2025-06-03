@@ -12,23 +12,24 @@ final class CartViewModel: ObservableObject {
     @Published var items: [CartItem] = []
     @Published var totalPrice: Double = 0
 
-    private var cartManager = CartManager.shared
+    private var cart = CartManager.shared
 
     init() {
-        self.items = cartManager.items
-        self.totalPrice = cartManager.items.reduce(0) { $0 + $1.totalPrice }
+        self.items = cart.items
+        self.totalPrice = cart.items.reduce(0) { $0 + $1.totalPrice }
 
         Task {
-            for await _ in cartManager.$items.values {
-                self.items = cartManager.items
-                self.totalPrice = cartManager.items.reduce(0) { $0 + $1.totalPrice }
+            for await _ in cart.$items.values {
+                self.items = cart.items
+                self.totalPrice = cart.items.reduce(0) { $0 + $1.totalPrice }
             }
         }
     }
 
+
     func clearCart() {
-        cartManager.clear()
-        items = cartManager.items
+        cart.clear()
+        items = cart.items
         totalPrice = items.reduce(0) { $0 + $1.totalPrice }
     }
 }
