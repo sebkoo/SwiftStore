@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ProductDetailView: View {
     @ObservedObject var viewModel: ProductDetailViewModel
+    @StateObject private var favoritesManager = FavoritesManager.shared
 
     var body: some View {
         ScrollView {
@@ -25,24 +26,28 @@ struct ProductDetailView: View {
                     .background(Color.gray.opacity(0.1))
                 }
 
-                Text(viewModel.title)
-                    .font(.title)
-                    .fontWeight(.bold)
+                HStack {
+                    Text(viewModel.title)
+                        .font(.title)
+                        .fontWeight(.bold)
+
+                    Spacer()
+
+                    Button {
+                        FavoritesManager.shared.toggle(viewModel.product)
+                    } label: {
+                        Image(systemName: FavoritesManager.shared.contains(viewModel.product)
+                              ? "heart.fill"
+                              : "heart"
+                        )
+                        .foregroundColor(.red)
+                        .font(.largeTitle)
+                    }
+                }
 
                 Text(viewModel.price)
                     .font(.title2)
                     .foregroundColor(.secondary)
-
-                Button {
-                    FavoritesManager.shared.toggle(viewModel.product)
-                } label: {
-                    Image(systemName: FavoritesManager.shared.contains(viewModel.product)
-                          ? "heart.fill"
-                          : "heart"
-                    )
-                    .foregroundColor(.red)
-                    .font(.title2)
-                }
 
                 Button {
                     CartManager.shared.add(viewModel.product)
@@ -56,8 +61,6 @@ struct ProductDetailView: View {
                         .cornerRadius(10)
                 }
                 .padding(.top, 20)
-
-
 
                 Spacer()
             }
