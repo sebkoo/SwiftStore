@@ -22,6 +22,11 @@ struct MainView: View {
                     Label("Cart", systemImage: "cart")
                 }
 
+            FavoritesView()
+                .tabItem {
+                    Label("Favorites", systemImage: "heart")
+                }
+
             Button("Logout") {
                 session.logout()
             }
