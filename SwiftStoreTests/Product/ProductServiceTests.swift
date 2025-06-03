@@ -11,7 +11,7 @@ import XCTest
 final class ProductServiceTests: XCTestCase {
     func test_fetchProducts_returnsProductArray() async throws {
         let service = SwiftProductService()
-        let products = try await service.fetchProducts()
+        let products = try await service.fetchProductList()
         XCTAssertFalse(products.isEmpty)
     }
 }

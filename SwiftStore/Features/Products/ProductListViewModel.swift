@@ -22,7 +22,7 @@ final class ProductListViewModel: ObservableObject {
     func loadProducts() async {
         isLoading = true
         do {
-            products = try await service.fetchProducts()
+            products = try await service.fetchProductList()
         } catch {
             errorMessage = error.localizedDescription
         }

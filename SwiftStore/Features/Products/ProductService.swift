@@ -8,15 +8,39 @@
 import Foundation
 
 protocol ProductService {
-    func fetchProducts() async throws -> [Product]
+    func fetchProductList() async throws -> [Product]
+    func fetchProduct(id: Int) async throws -> Product
 }
 
 final class SwiftProductService: ProductService {
-    func fetchProducts() async throws -> [Product] {
-        guard let url = URL(string: "https://api.escuelajs.co/api/v1/products") else {
-            throw URLError(.badURL)
-        }
-        let (data, _) = try await URLSession.shared.data(from: url)
-        return try JSONDecoder().decode([Product].self, from: data)
+    private let client: HTTPClient
+
+    init(client: HTTPClient = HTTPClient()) {
+        self.client = client
+    }
+
+    func fetchProductList() async throws -> [Product] {
+        try await client.get("/products")
+    }
+
+    func fetchProduct(id: Int) async throws -> Product {
+        try await client.get("/products/\(id)")
+    }
+}
+
+final class MockProductService: ProductService {
+    let sampleProduct = Product(
+        id: 1,
+        title: "Mock T-Shirt",
+        price: 29,
+        images: ["https://placeimg.com/640/480/any"]
+    )
+
+    func fetchProductList() async throws -> [Product] {
+        return [sampleProduct]
+    }
+
+    func fetchProduct(id: Int) async throws -> Product {
+        return sampleProduct
     }
 }

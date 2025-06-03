@@ -62,7 +62,7 @@ struct ProductDetailView: View {
         images: ["https://placehold.co/600x400"]
     )
     let viewModel = ProductDetailViewModel(product: mockProd)
-    return NavigationView {
+    NavigationView {
         ProductDetailView(viewModel: viewModel)
     }
 }

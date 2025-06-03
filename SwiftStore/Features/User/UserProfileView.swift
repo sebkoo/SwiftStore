@@ -28,9 +28,6 @@ struct UserProfileView: View {
 
                     Text(profile.email)
                         .foregroundColor(.gray)
-
-                    Text("Role: \(profile.role)")
-                        .font(.subheadline)
                 }
                 .padding()
             } else if viewModel.isLoading {

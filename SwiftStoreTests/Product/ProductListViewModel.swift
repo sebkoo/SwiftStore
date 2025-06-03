@@ -13,13 +13,13 @@ final class ProductListViewModelTests: XCTestCase {
 
     // MARK: - Mock Service
     class MockServiceSuccess: ProductService {
-        func fetchProducts() async throws -> [Product] {
+        func fetchProductList() async throws -> [Product] {
             return [Product(id: 1, title: "Mock", price: 99.99, images: [])]
         }
     }
 
     class MockServiceFailure: ProductService {
-        func fetchProducts() async throws -> [Product] {
+        func fetchProductList() async throws -> [Product] {
             throw URLError(.notConnectedToInternet)
         }
     }
